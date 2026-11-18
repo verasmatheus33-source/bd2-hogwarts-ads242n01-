@@ -107,7 +107,11 @@ Porque a relação entre aluno e disciplina é de muitos-para-muitos
 -- =====================================================================
 -- 1.1 CARGA INICIAL DE DADOS (DML)
 -- =====================================================================
--- INSERT casa
+INSERT INTO casa (nome_casa, fundador) VALUES
+('Grifinória', 'Godric Gryffindor'), -- 1
+('Sonserina', 'Salazar Slytherin'),     -- 2
+('Corvinal', 'Rowena Ravenclaw'),      -- 3
+('Lufa-Lufa', 'Helga Hufflepuff');     -- 4
 
 -- INSERT professor
 
