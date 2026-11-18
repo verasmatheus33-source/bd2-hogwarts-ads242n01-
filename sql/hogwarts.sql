@@ -20,26 +20,88 @@ DROP DATABASE IF EXISTS hogwarts;
 CREATE DATABASE hogwarts;
 USE hogwarts;
 
--- Tabela casa
+CREATE TABLE casa (
+    id_casa INT AUTO_INCREMENT PRIMARY KEY,
+    nome_casa VARCHAR(30) NOT NULL UNIQUE,
+    fundador VARCHAR(60),
+    pontos INT DEFAULT 0
+);
 
--- Tabela professor
+CREATE TABLE professor (
+    id_prof INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    salario DECIMAL(10,2) CHECK (salario > 0),
+    data_contratacao DATE,
+    id_casa INT,
+    FOREIGN KEY (id_casa) REFERENCES casa(id_casa)
+);
 
--- Tabela disciplina
+CREATE TABLE disciplina (
+    id_disc INT AUTO_INCREMENT PRIMARY KEY,
+    nome_disc VARCHAR(60) NOT NULL UNIQUE,
+    ano_minimo INT CHECK (ano_minimo BETWEEN 1 AND 7),
+    id_prof INT,
+    FOREIGN KEY (id_prof) REFERENCES professor(id_prof)
+);
 
--- Tabela aluno
+CREATE TABLE aluno (
+    id_aluno INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    ano_escolar INT CHECK (ano_escolar BETWEEN 1 AND 7),
+    id_casa INT,
+    saldo_galeoes DECIMAL(10,2) DEFAULT 0.00 CHECK (saldo_galeoes >= 0),
+    FOREIGN KEY (id_casa) REFERENCES casa(id_casa)
+);
 
--- Tabela matricula
+CREATE TABLE matricula (
+    id_aluno INT,
+    id_disc INT,
+    nota DECIMAL(4,2) CHECK (nota BETWEEN 0 AND 10),
+    PRIMARY KEY (id_aluno, id_disc),
+    FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno),
+    FOREIGN KEY (id_disc) REFERENCES disciplina(id_disc)
+);
 
--- Tabela registro_pontos
+CREATE TABLE registro_pontos (
+    id_registro INT AUTO_INCREMENT PRIMARY KEY,
+    id_aluno INT NOT NULL,
+    id_prof INT NOT NULL,
+    pontos INT NOT NULL,
+    motivo VARCHAR(150) NOT NULL,
+    data_registro DATE NOT NULL,
+    FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno),
+    FOREIGN KEY (id_prof) REFERENCES professor(id_prof)
+);
 
--- Tabela produto
+CREATE TABLE produto (
+    id_produto INT AUTO_INCREMENT PRIMARY KEY,
+    nome_produto VARCHAR(100) NOT NULL,
+    loja VARCHAR(50) NOT NULL,
+    preco DECIMAL(10,2) CHECK (preco > 0),
+    estoque INT DEFAULT 0 CHECK (estoque >= 0)
+);
 
--- Tabela compra
+CREATE TABLE compra (
+    id_compra INT AUTO_INCREMENT PRIMARY KEY,
+    id_aluno INT NOT NULL,
+    id_produto INT NOT NULL,
+    quantidade INT CHECK (quantidade > 0),
+    valor_total DECIMAL(10,2),
+    data_compra DATE NOT NULL,
+    FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno),
+    FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
+);
 
--- Tabela log_auditoria
+CREATE TABLE log_auditoria (
+    id_log INT AUTO_INCREMENT PRIMARY KEY,
+    tabela VARCHAR(30),
+    operacao VARCHAR(10),
+    descricao VARCHAR(255),
+    data_hora DATETIME DEFAULT CURRENT_TIMESTAMP
+);
 
 -- Pergunta para pensar: por que matricula usa chave primária composta?
--- Resposta:
+Porque a relação entre aluno e disciplina é de muitos-para-muitos
 
 
 -- =====================================================================
